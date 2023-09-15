@@ -65,12 +65,17 @@ final class MovieQuizViewController: UIViewController {
     
     // Добавления рамки правильного цвета вокруг афишы
     private func showAnswerResult(isCorrect: Bool) {
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         isCorrect ? correctAnswers += 1 : nil
         // запускаем задачу через 1 секунду c помощью диспетчера задач
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.imageView.layer.borderWidth = 0
+            self.yesButton.isEnabled = true
+            self.noButton.isEnabled = true
             self.showNextQuestionOrResults()
         }
     }
@@ -86,7 +91,6 @@ final class MovieQuizViewController: UIViewController {
             show(quiz: viewModel)
         } else {
             currentQuestionIndex += 1
-            imageView.layer.borderWidth = 0
             let nextQuestion = questions[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
             
@@ -122,18 +126,22 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - Привязка ViewController
     //Афиша
-    @IBOutlet private var imageView: UIImageView!
+    @IBOutlet private weak var imageView: UIImageView!
     //Счетчик вопроса
-    @IBOutlet private var counterLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
     //Текст вопроса
-    @IBOutlet private var textLabel: UILabel!
+    @IBOutlet private weak var textLabel: UILabel!
+    //Нет кнопка
+    @IBOutlet private weak var noButton: UIButton!
     //Да кнопка
+    @IBOutlet private weak var yesButton: UIButton!
+    //Да кнопка действие
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = true
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
-    //Нет кнопка
+    //Нет кнопка действие
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = false
